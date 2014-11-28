@@ -14,19 +14,20 @@ def from_file_to_list(file):
 
 
 def get_domain(url):
-    url = url.strip("http://www.")
+    url = url.strip("https://www.")
     return url
 
 
 def fill_database(session, titles, scanned_urls):
     site_domain = get_domain(scanned_urls[0])
     session.add(Website(title=titles[0], url=scanned_urls[0], domain=site_domain))
-    ID = session.query(Website.id).filter(Website.title == titles[0]).one()
-    ID = ID[0]
-    for count in range(1, len(titles)):
+
+    for count in range(0, len(titles)):
+        ID = session.query(Website.id).filter(Website.title == titles[0]).all()
+        ID = ID[0][0]
         session.add(Page(title=titles[count], url=scanned_urls[count], website_id=ID))
-    p_count = session.query(Page).filter(Website.id == ID).count()
-    p_count += 1  # Main page including
+
+    p_count = session.query(Page).filter(Page.website_id == ID).count()
     session.execute(update(Website).where(Website.id == ID).values(pages_count=p_count))
     session.commit()
 
@@ -36,6 +37,8 @@ def crawl(session, websites, titles, urls):
         base_url = item
         crawler.scan_page(item, base_url)
         fill_database(session, titles, urls)
+        del titles[:]
+        del urls[:]
 
 
 def main():
