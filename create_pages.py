@@ -11,13 +11,12 @@ class Page(Base):
     title = Column(String)
     website_id = Column(Integer, ForeignKey("website.id"))
     website = relationship("Website", backref="pages")
-    ads = Column(String)
     SSL = Column(String)
     points = Column(Float)
     multy_lang = Column(Integer)
 
     def __str__(self):
-        return "{}| {} - {}".format(self.id, self.movie_type, self.time)
+        return "{}".format(self.url)
 
     def __repr__(self):
         return self.__str__()
