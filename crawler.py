@@ -3,6 +3,7 @@ import requests
 from urllib.parse import urljoin, urlparse
 import os
 
+
 scanned_urls = []
 titles = []
 outer_links = []
@@ -56,7 +57,7 @@ def scan_page(url, base_url):
         if soup.title:
             if url not in scanned_urls:
                 scanned_urls.append(url)
-                titles.append(soup.title.string)
+                titles.append(soup.title.string.encode('utf-8'))
 
             for link in soup.find_all("a"):
                 new_link = prepare_link(url, link.get("href"))
