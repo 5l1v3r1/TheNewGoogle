@@ -21,6 +21,14 @@ def hello():
 @app.route("/search/")
 def search_result():
     key_word = request.args.get("search_word", "")
+    dom_query = cursor.execute("SELECT * FROM website")
+    domains = []
+    for row in dom_query:
+        domains.append([row['title'].decode(encoding='utf-8'), row['url']])
+    for item in domains:
+        if key_word in item[1]:
+            return render_template("result.html", links=[item])
+
     query = cursor.execute("""SELECT * FROM page WHERE title LIKE ? OR url LIKE ?""",
                            ('%'+key_word+'%', '%'+key_word+'%'))
     result = []
@@ -30,4 +38,4 @@ def search_result():
 
 
 if __name__ == "__main__":
-    app.run(port=80)
+    app.run(debug=True)
